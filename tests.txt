@@ -50,5 +50,11 @@ sh editremote.sh wally@panacea:/home/wally/spaced path/spaced file.txt
 sh editremote.sh -e vi wally@panacea:/home/wally/file.txt
 # 1.0 pass
 
+# No filename passed to script
+# 1.0 pass
+
+# No filename passed to script, with editor passed
+# 1.0 pass
+
 # Local tests (repeat above tests on local files)
 # 1.0 pass

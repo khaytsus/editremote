@@ -31,6 +31,15 @@ if [ -e ~/.editremote.sh ]; then
     source ~/.editremote.sh
 fi
 
+# Check to make sure we have either 1 or 3 parameters, for some reason
+# can't just use -ne here, seems goofy
+if [ $# -eq 1 ] || [ $# -eq 3 ]; then
+    echo -n
+else
+    echo "Invalid number of parameters passed"
+    exit
+fi
+
 # Handle -e paramter in any order, ugly but works
 for var in "$@"
 do
