@@ -13,6 +13,8 @@ editor=vi
 # IE:  If your editor forks into the background, set this to 1
 prompt_for_unmount=0
 
+version=1.0
+
 evar=0
 fileurl=""
 localfile=""
@@ -26,35 +28,35 @@ fi
 # Handle -e paramter in any order, ugly but works
 for var in "$@"
 do
-    if [ "$evar" == "1" ]; then
-        editor=$var
+    if [ "${evar}" == "1" ]; then
+        editor=${var}
         evar=0
     fi
 
-    if [ "$var" == "-e" ]; then
+    if [ "${var}" == "-e" ]; then
         # If we see -e, the next var is going to be the editor to use
         evar=1
         # And to make sure we don't unmount immediately, set the unmount var to 1
         prompt_for_unmount=1
     fi
 
-    if [[ "$var" =~ ^(.*):(.*) ]]; then
-        fileurl=$var
+    if [[ "${var}" =~ ^(.*):(.*) ]]; then
+        fileurl=${var}
         sshfs=1
     fi
 
     # This is goofy, but track a localfile in case we don't wind up detecting a remote file path
     if [ ${sshfs} == 0 ]; then
-        localfile=$var
+        localfile=${var}
     fi
 done
 
-if [ ! -x "$(type -p $editor)" ]; then
+if [ ! -x "$(type -p ${editor})" ]; then
     echo "${editor} not found in path, exiting"
     exit
 fi
 
-if [ "$fileurl" == "" ] && [ "$localfile" == "" ]; then
+if [ "${fileurl}" == "" ] && [ "${localfile}" == "" ]; then
     echo "No file to edit found; exiting"
     exit
 fi
@@ -63,8 +65,8 @@ fi
 function cleanexit
 {
     cleandir=$1
-    if [ "$cleandir" != "" ]; then
-        fusermount -uz ${cleandir}
+    if [ "${cleandir}" != "" ]; then
+        fusermount -uz "${cleandir}"
         rmdir "${cleandir}"
     fi
     exit
@@ -76,7 +78,11 @@ function testedit
     testfile="$1"
 
     if [ -e ${testfile} ]; then
-        if [ ! -w "${testfile}" ]; then
+        # For some reason [ -w ] doesn't work; use touch
+        touch -ac "${testfile}" >/dev/null 2>&1
+        rc=$?
+        if [ ${rc} != 0 ]; then
+            echo ""
             echo "WARNING!  No permission to edit ${testfile}!"
             sleep 1s
         fi
@@ -84,7 +90,7 @@ function testedit
         tmpfile=$(mktemp -q ${testfile}.XXXXXXX)
         touch "${tmpfile}" >/dev/null 2>&1
         rc=$?
-        if [ $rc != 0 ]; then
+        if [ ${rc} != 0 ]; then
             echo "FAILURE!  No permission to write to path and ${testfile} does not exist!"
             cleanexit
         else
@@ -93,7 +99,7 @@ function testedit
     fi
 }
 
-if [ $sshfs == 1 ]; then
+if [ ${sshfs} == 1 ]; then
     # Make sure sshfs is available
     if [ ! -x "$(type -p sshfs)" ]; then
         echo "sshfs is not installed; exiting"
@@ -109,37 +115,37 @@ if [ $sshfs == 1 ]; then
     remote=""
 
     # Break up the file url
-    if [[ $fileurl =~ \@ ]]; then
+    if [[ ${fileurl} =~ \@ ]]; then
         user=`echo ${fileurl} | cut -f 1 -d "@"`
         url=`echo ${fileurl} | cut -f 2 -d "@"`
     else
-        url=$fileurl
+        url=${fileurl}
     fi
 
     # Now get the directory path out for sshfs
     remote=`echo ${url} | cut -f 1 -d ":"`
     fullpath=`echo ${url} | cut -f 2 -d ":"`
-    filename=`basename ${fullpath}`
+    filename=`basename "${fullpath}"`
     dir=$(dirname "${fullpath}")
 
-    if [[ "$dir" =~ \~ ]]; then
+    if [[ "${dir}" =~ \~ ]]; then
         echo "Cannot use relative paths such as ~/ please use full path"
         exit
     fi
 
-    if [ "$user" != "" ]; then
+    if [ "${user}" != "" ]; then
         userstring="${user}@"
     fi
 
     # Create a somewhat friendly tmp path
     tmpdirstring=${dir//\//_}
-    tmpdir=`mktemp -d /tmp/XXXX.${remote}${tmpdirstring}`
+    tmpdir=`mktemp -d "/tmp/XXXX.${remote}${tmpdirstring}"`
 
     # Make sure we have everything we need
-    if [ "$remote" != "" ] && [ "$dir" != "" ] && [ "$filename" != "" ]; then
+    if [ "${remote}" != "" ] && [ "${dir}" != "" ] && [ "${filename}" != "" ]; then
         sshfs "${userstring}${remote}:${dir}" "${tmpdir}"
         rc=$?
-        if [ $rc != 0 ]; then
+        if [ ${rc} != 0 ]; then
             echo "FAILURE!  sshfs failed, invalid hostname or other error?  Attempted the following:"
             echo "sshfs ${userstring}${remote}:${dir} ${tmpdir}"
             cleanexit
@@ -153,7 +159,7 @@ if [ $sshfs == 1 ]; then
         pid=$!
         # We have to handle editors that launch in the the background by watching their pid
         # But if the editor is already running, like sublime, we get a temporary pid
-        if [ $prompt_for_unmount == 0 ]; then
+        if [ ${prompt_for_unmount} == 0 ]; then
             wait ${pid}
         else
             # If all else fails, we just prompt to user to let us finish up..  gross
@@ -163,7 +169,7 @@ if [ $sshfs == 1 ]; then
         cleanexit "${tmpdir}"
     else
         echo "Something went wrong..."
-        echo "remote: [$remote] dir: [$dir] filename: [$filename]"
+        echo "remote: [${remote}] dir: [${dir}] filename: [${filename}]"
         cleanexit "${tmpdir}"
     fi
 else

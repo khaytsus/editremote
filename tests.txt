@@ -1,0 +1,54 @@
+# File is edited, warns and exits as expected, and no temp files or directories left behind, sshfs is not left mounted
+
+# Remote
+
+# Full valid remote path, file exists
+sh editremote.sh panacea:/home/wally/exists.txt
+# 1.0 pass
+
+# Full valid remote path, file does not exist
+sh editremote.sh panacea:/home/wally/doesnotexist.txt
+# 1.0 pass
+
+# Full valid remote path with username
+sh editremote.sh wally@panacea:/home/wally/exists.txt
+# 1.0 pass
+
+# Writable path, unwriteable file (warn; for viewing)
+sh editremote.sh wally@panacea:/home/wally/readonly.txt
+# 1.0 pass
+
+# Unwritable path, writable file
+sh editremote.sh wally@panacea:/root/edittest.txt
+# 1.0 pass   (git edit wrapper fails here!)
+
+# Unwritable path, new file exits
+sh editremote.sh wally@panacea:/root/newfile.txt
+# 1.0 pass
+
+# Relative home path exits
+sh editremote.sh wally@panacea:~/exists.txt
+# 1.0 pass
+
+# Spaces in file
+sh editremote.sh "wally@panacea:/home/wally/spaced file.txt"
+# 1.0 pass
+
+# Spaces in file and path
+sh editremote.sh "wally@panacea:/home/wally/spaced path/spaced file.txt"
+# 1.0 pass
+
+# Use default editor in script (no ~/.editremote.sh)
+sh editremote.sh wally@panacea:/home/wally/file.txt
+# 1.0 pass
+
+# Specify editor in ~/.editremote.sh
+sh editremote.sh wally@panacea:/home/wally/spaced path/spaced file.txt
+# 1.0 pass
+
+# Specify editor inline
+sh editremote.sh -e vi wally@panacea:/home/wally/file.txt
+# 1.0 pass
+
+# Local tests (repeat above tests on local files)
+# 1.0 pass

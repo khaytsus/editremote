@@ -13,13 +13,24 @@ The script also supports local files.  If a remote path is not detected, the scr
 
 You can specify which editor you wish to use passing the -e flag into the script which will use the specified editor for this session, ie:  editeremote.sh -e nano user@machine:/path/to/file   Note:  If -e is specified, prompt_for_unmount (see below) is set to 1 to ensure the sshfs isn't unounted too early.
 
+#### General usage
+
+##### Remote file usage
+editremote.sh user@remote.com:/home/user/file.txt
+
+##### File and/or path with spaces
+
+If editing a path or filename with spaces, enclose the whole thing in quotes.
+
+editremote.sh "user@remote.com:/home/user/spaced dir/spaced file.txt"
+
 #### Configuration of default editor
 
 To specify a default editor you can create a file named ~/.editremote.sh with two variables in it.
 
-* editor
+* editor="/path/to/editorbin"
   * Path to the editor of your choice
-* prompt_for_unmount
+* prompt_for_unmount=0
   * 0 means do not prompt to unount sshfs, it will unmount as soon as the editor exits
   * 1 means to prompt the user to hit enter to unmount sshfs (for editors which fork to the background)
 
