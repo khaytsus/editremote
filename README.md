@@ -13,19 +13,22 @@ The script also supports local files.  If a remote path is not detected, the scr
 
 You can specify which editor you wish to use passing the -e flag into the script which will use the specified editor for this session, ie:  editeremote.sh -e nano user@machine:/path/to/file   Note:  If -e is specified, prompt_for_unmount (see below) is set to 1 to ensure the sshfs isn't unounted too early.
 
-#### General usage
+### General Usage
 
-##### Remote file usage
+#### Remote file usage
 editremote.sh user@remote.com:/home/user/file.txt
 
-##### File and/or path with spaces
-
+#### File and/or path with spaces
 If editing a path or filename with spaces, enclose the whole thing in quotes.
 
 editremote.sh "user@remote.com:/home/user/spaced dir/spaced file.txt"
 
-#### Configuration of default editor
+#### Specify editor to use 
+If you want to use a specific editor for most edits, configure the default editor as noted in the next section.  For one-off editor changes, you can pass the -e flag into the command. 
 
+editremote.sh -e vim user@remote.com:/home/user/file.txt
+
+### Configuration of default editor
 To specify a default editor you can create a file named ~/.editremote.sh with two variables in it.
 
 * editor="/path/to/editorbin"
@@ -39,12 +42,10 @@ Example:
 editor=sublime 
 prompt_for_unmount=1
 
-#### Use Cases
-
+### Use Cases
 My primary use case for this script is editing Perl on a remote Raspberry Pi in Sublime so I have all of my favorite plugins and such available without copying files back and forth.  This script can also avoid dealing with latency in a remote shell's editor, however there could be cases where the editor is waiting on data from the remote path, auto-saving, etc.  I have personally not experienced any such issues, however.
 
-#### A few small warnings
-
+### A few small warnings
 First, this creates a temporary path in /tmp to mount the sshfs.  This should not be readable by other system users but since it is in /tmp it is worth mentioning.
 
 Also, if your editor does git stuff, such as querying the current diffs, branches, etc, you might wind up with a git process doing stuff which might cause problems with unmounting the sshfs.  Saving and closing the file from the editor works fine in most cases.  Most modern fancy editors, such as Atom, Sublime, etc, may do this by default.  I have seen Sublime give some strange git-related errors sometimes after allowing the script to unmount sshfs.
