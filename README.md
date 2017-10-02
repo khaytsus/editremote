@@ -39,8 +39,8 @@ To specify a default editor you can create a file named ~/.editremote.sh with tw
 
 Example:
 
-editor=sublime 
-prompt_for_unmount=1
+editor=sublime  
+prompt_for_unmount=1  
 
 ### Use Cases
 My primary use case for this script is editing Perl on a remote Raspberry Pi in Sublime so I have all of my favorite plugins and such available without copying files back and forth.  This script can also avoid dealing with latency in a remote shell's editor, however there could be cases where the editor is waiting on data from the remote path, auto-saving, etc.  I have personally not experienced any such issues, however.
