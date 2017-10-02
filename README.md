@@ -11,7 +11,7 @@ The full remote file path must be specified, ie:  user@machine:~/fileinhomedir.t
 
 The script also supports local files.  If a remote path is not detected, the script will edit the file directly (no sshfs, etc).  You could potentially use this script as your default editor for both local and remote files and not have to run a different editor/script based on the file location.
 
-You can specify which editor you wish to use passing the -e flag into the script which will use the specified editor for this session, ie:  editeremote.sh -e nano user@machine:/path/to/file   Note:  If -e is specified, prompt_for_unmount (see below) is set to 1 to ensure the sshfs isn't unounted too early.
+You can specify which editor you wish to use as noted in the next section.  Note:  If -e is specified, prompt_for_unmount (see below) is set to 1 to ensure the sshfs isn't unounted too early.
 
 ### General Usage
 

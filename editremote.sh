@@ -2,7 +2,13 @@
 
 # Edit a file remotely over sshfs using a defined editor or the one specified with -e
 
-# TODO:  Make sure spaces in path and file are safe and work
+# Remote file usage:
+# editremote.sh user@remote.com:/home/user/file.txt
+
+# If editing a path or filename with spaces, enclose the whole thing, ie:
+# editremote.sh "user@remote.com:/home/user/spaced dir/spaced file.txt"
+
+# You can also edit local files, which of course skips the sshfs bits
 
 # Don't edit this script!  To specify your personal default editor, create a file named
 # ~/.editremote.sh and put these two variables in it with the appropriate values.
